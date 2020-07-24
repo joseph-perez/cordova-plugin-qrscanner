@@ -489,8 +489,25 @@ public class QRScanner extends CordovaPlugin implements BarcodeCallback {
         }
 
         if(barcodeResult.getText() != null) {
+            HashMap resultHashMap = new HashMap();
+
+            resultHashMap.put("data", barcodeResult.getText());
+
+            BarcodeFormat type = barcodeResult.getBarcodeFormat();
+            if (BarcodeFormat.QR_CODE.equals(type)) {
+                resultHashMap.put("type", "qr_code");
+            } else if (BarcodeFormat.CODE_39.equals(type)) {
+                resultHashMap.put("type", "code_39");
+            } else if (BarcodeFormat.CODE_128.equals(type)) {
+                resultHashMap.put("type", "code_128");
+            } else if (BarcodeFormat.PDF_417.equals(type)) {
+                resultHashMap.put("type", "pdf417");
+            }
+
+            JSONObject result = new JSONObject(resultHashMap);
+
             scanning = false;
-            this.nextScanCallback.success(barcodeResult.getText());
+            this.nextScanCallback.success(result);
             this.nextScanCallback = null;
         }
         else {
